@@ -66,7 +66,7 @@ public class RecipeJSONUtil {
 
                 for (int j = 0; j < steps.length; j++) {
 
-                    JSONObject stepJSONObject = stepsArray.getJSONObject(i);
+                    JSONObject stepJSONObject = stepsArray.getJSONObject(j);
                     Step step = new Step();
 
                     attribute = ID;
@@ -97,6 +97,7 @@ public class RecipeJSONUtil {
                     {
                         step.setThumbnailURL(stepJSONObject.getString(attribute));
                     }
+                    step.setRecipeId(recipe.getId());
                     steps[j] = step;
                 }
                 recipe.setSteps(steps);
@@ -109,7 +110,7 @@ public class RecipeJSONUtil {
                 Ingredient [] ingredients = new Ingredient[ingredientsArray.length()];
                 for (int j = 0; j < ingredients.length; j++) {
 
-                    JSONObject ingredientJSONObject = ingredientsArray.getJSONObject(i);
+                    JSONObject ingredientJSONObject = ingredientsArray.getJSONObject(j);
                     Ingredient ingredient = new Ingredient();
 
                     attribute = MEASURE;
@@ -130,7 +131,7 @@ public class RecipeJSONUtil {
                     {
                         ingredient.setQuantity(ingredientJSONObject.getInt(attribute));
                     }
-
+                    ingredient.setRecipeId(recipe.getId());
                     ingredients[j] = ingredient;
                 }
 

@@ -1,13 +1,38 @@
 package ga.najjar.bakingapp.Utils;
 
+
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
+
+@Entity(tableName = "recipe")
 public class Recipe {
 
+    public Recipe(int id,String name,int servings, String image)
+    {
+        this.id = id;
+        this.name = name;
+        this.servings = servings;
+        this.image = image;
+    }
+
+    @Ignore
+    public Recipe()
+    {
+
+    }
+    @PrimaryKey
     private int id;
     private String name;
-    private Step [] steps;
-    private Ingredient [] ingredients;
+
     private int servings;
     private String image;
+
+    @Ignore
+    private Step [] steps;
+    @Ignore
+    private Ingredient [] ingredients;
 
     public int getId() {
         return id;
@@ -58,83 +83,6 @@ public class Recipe {
     }
 }
 
-class Step
-{
-    private int id;
-    private String shortDescription;
-    private String description;
-    private String videoURL;
-    private String thumbnailURL;
 
-    public int getId() {
-        return id;
-    }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
-    public String getShortDescription() {
-        return shortDescription;
-    }
-
-    public void setShortDescription(String shortDescription) {
-        this.shortDescription = shortDescription;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getVideoURL() {
-        return videoURL;
-    }
-
-    public void setVideoURL(String videoURL) {
-        this.videoURL = videoURL;
-    }
-
-    public String getThumbnailURL() {
-        return thumbnailURL;
-    }
-
-    public void setThumbnailURL(String thumbnailURL) {
-        this.thumbnailURL = thumbnailURL;
-    }
-
-}
-
-class Ingredient
-{
-    private int quantity;
-    private String measure;
-    private String ingredient;
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public String getIngredient() {
-        return ingredient;
-    }
-
-    public String getMeasure() {
-        return measure;
-    }
-
-    public void setIngredient(String ingredient) {
-        this.ingredient = ingredient;
-    }
-
-    public void setMeasure(String measure) {
-        this.measure = measure;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-}
