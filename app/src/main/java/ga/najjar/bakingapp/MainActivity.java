@@ -1,5 +1,6 @@
 package ga.najjar.bakingapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -8,6 +9,7 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -29,8 +31,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private int LOADER_ID = 22;
     private AppDatabase mDb;
+    private Recipe[] recipes;
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+
+        super.onSaveInstanceState(outState);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -45,8 +56,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             Loader<String> dataLoader = loaderManager.getLoader(LOADER_ID);
             if (dataLoader == null)
                 loaderManager.initLoader(LOADER_ID, null, this).forceLoad();
-            else
-                loaderManager.restartLoader(LOADER_ID, null, this).forceLoad();
+
+            // TODO restart the loader when a referesh button is clicked
+            //else
+            //    loaderManager.restartLoader(LOADER_ID, null, this).forceLoad();
 
         } else {
             // TODO Manage no internet message
@@ -78,18 +91,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 try {
                     results = NetworkUtilities.getResponseFromHttpUrl(recipesURL);
 
-                    Recipe[] recipes = RecipeJSONUtil.parseRecipe(results);
+                    recipes = RecipeJSONUtil.parseRecipe(results);
+
+                    //
+                    Utils.Recipes = Arrays.asList(recipes);
 
                     updateDB(recipes);
 
                     Log.d("recipes.length ",String.valueOf(recipes.length));
-
-                    RecipeFragment recipeFragment = new RecipeFragment();
-                    FragmentManager fragmentManager = getSupportFragmentManager();
-                    fragmentManager.beginTransaction()
-                            .replace(R.id.recipe_fragment_layout,recipeFragment)
-                            .commit();
-
 
                 } catch (IOException e) {
                     // TODO manage exception in getting the data
@@ -114,8 +123,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             public void run() {
                 List<Recipe> roomRecipes = mDb.recipeDao().loadRecipe();
 
-                Utils.Recipes = roomRecipes;
-
                 for (Recipe rec: roomRecipes) {
                     mDb.recipeDao().deleteRecipe(rec);
                 }
@@ -134,10 +141,23 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     }
 
                 }
+
+
+                updateRecipeFragment();
             }
         });
 
         update.start();
+
+    }
+
+    private void updateRecipeFragment() {
+
+        RecipeFragment recipeFragment = new RecipeFragment();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.recipe_fragment_layout,recipeFragment)
+                .commitAllowingStateLoss();
 
     }
 
@@ -156,5 +176,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         // TODO call child activity or load details fragment
         Toast.makeText(this, " clicked " + position,Toast.LENGTH_LONG).show();
+
+        Intent intent = new Intent(this,DetailActivity.class);
+        intent.putExtra("recipeId",Utils.Recipes.get(position).getId());
+
+        startActivity(intent);
     }
 }
