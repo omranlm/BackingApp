@@ -33,11 +33,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private AppDatabase mDb;
     private Recipe[] recipes;
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
 
-        super.onSaveInstanceState(outState);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
