@@ -52,6 +52,9 @@ public class DetailsFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
+        // This is to avoid re creating the fragment when rotating from the main activity on a landscape over 600 screens
+        if (savedInstanceState !=null) return null;
+
         selectedRecipe = null;
         Bundle bundle = this.getArguments();
 
@@ -209,12 +212,13 @@ public class DetailsFragment extends Fragment implements View.OnClickListener {
 
     }
 
-    private void destroyPlayer() {
+    public void destroyPlayer() {
         if (mExoPlayer == null) return;
         mExoPlayer.stop();
         mExoPlayer.release();
         mExoPlayer = null;
     }
+
 
     @Override
     public void onDestroy() {

@@ -27,12 +27,14 @@ import ga.najjar.bakingapp.Utils.RecipeJSONUtil;
 import ga.najjar.bakingapp.Utils.Step;
 import ga.najjar.bakingapp.Utils.Utils;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String> , RecipeFragment.OnRecipeClickListener {
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String>, RecipeFragment.OnRecipeClickListener {
 
     private int LOADER_ID = 22;
     private AppDatabase mDb;
     private Recipe[] recipes;
-
+    private boolean mTwoPanelMode;
+    private DetailsFragment detailsFragment;
+    private Bundle currentState;
 
 
     @Override
@@ -44,6 +46,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mDb = AppDatabase.getInstance(getApplicationContext());
 
         loadRecipes();
+
+        if (findViewById(R.id.detail_fragment_layout) != null) {
+            mTwoPanelMode = true;
+        }
+        currentState = savedInstanceState;
     }
 
     private void loadRecipes() {
@@ -52,14 +59,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             Loader<String> dataLoader = loaderManager.getLoader(LOADER_ID);
             if (dataLoader == null)
                 loaderManager.initLoader(LOADER_ID, null, this).forceLoad();
-
             // TODO restart the loader when a referesh button is clicked
-            //else
-            //    loaderManager.restartLoader(LOADER_ID, null, this).forceLoad();
-
-        } else {
-            // TODO Manage no internet message
-
         }
 
     }
@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
                     updateDB(recipes);
 
-                    Log.d("recipes.length ",String.valueOf(recipes.length));
+                    Log.d("recipes.length ", String.valueOf(recipes.length));
 
                 } catch (IOException e) {
                     // TODO manage exception in getting the data
@@ -119,16 +119,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             public void run() {
                 List<Recipe> roomRecipes = mDb.recipeDao().loadRecipe();
 
-                for (Recipe rec: roomRecipes) {
+                for (Recipe rec : roomRecipes) {
                     mDb.recipeDao().deleteRecipe(rec);
                 }
 
                 // update the DB
-                for (Recipe rec :recipes) {
+                for (Recipe rec : recipes) {
 
                     mDb.recipeDao().insertRecipe(rec);
 
-                    for (Step step: rec.getSteps()) {
+                    for (Step step : rec.getSteps()) {
                         mDb.stepDao().insertStep(step);
                     }
 
@@ -137,7 +137,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     }
 
                 }
-
 
                 updateRecipeFragment();
             }
@@ -152,9 +151,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         RecipeFragment recipeFragment = new RecipeFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.recipe_fragment_layout,recipeFragment)
+                .replace(R.id.recipe_fragment_layout, recipeFragment)
                 .commitAllowingStateLoss();
-
     }
 
     @Override
@@ -165,17 +163,54 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onLoaderReset(@NonNull Loader<String> loader) {
 
+        if (Utils.Recipes != null)
+        {
+            updateRecipeFragment();
+        }
     }
 
     @Override
     public void onRecipeCardClick(int position) {
 
+        if (mTwoPanelMode) {
+            detailsFragment = new DetailsFragment();
+
+            int recipeId = Utils.Recipes.get(position).getId();
+            Bundle bundle = new Bundle();
+            bundle.putInt("recipeId", recipeId);
+
+            detailsFragment.setArguments(bundle);
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.detail_fragment_layout, detailsFragment)
+                    .commit();
+
+        }
         // TODO call child activity or load details fragment
-        Toast.makeText(this, " clicked " + position,Toast.LENGTH_LONG).show();
+        else {
+            Toast.makeText(this, " clicked " + position, Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(this, DetailActivity.class);
+            intent.putExtra("recipeId", Utils.Recipes.get(position).getId());
 
-        Intent intent = new Intent(this,DetailActivity.class);
-        intent.putExtra("recipeId",Utils.Recipes.get(position).getId());
+            startActivity(intent);
+        }
 
-        startActivity(intent);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (detailsFragment != null) {
+            detailsFragment.destroyPlayer();
+            getSupportFragmentManager().beginTransaction().remove(detailsFragment).commitAllowingStateLoss();
+        }
+
     }
 }

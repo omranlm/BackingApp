@@ -12,11 +12,22 @@ import android.widget.ListView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import ga.najjar.bakingapp.Utils.Utils;
 
-public class RecipeFragment extends Fragment {
+import static android.widget.GridLayout.VERTICAL;
+
+public class RecipeFragment extends Fragment implements RecipeCardAdapter.ItemClickListener{
 
     OnRecipeClickListener mCallback;
+    RecyclerView mRecyclerView;
+    @Override
+    public void onItemClickListener(int itemId) {
+        //
+        mCallback.onRecipeCardClick(itemId);
+    }
 
     public interface OnRecipeClickListener {
         void onRecipeCardClick(int position);
@@ -41,19 +52,16 @@ public class RecipeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_recipes,container,false);
 
-        ListView listView = root.findViewById(R.id.lv_recipes);
-
+        mRecyclerView = root.findViewById(R.id.rv_recipes);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // TODO set the adapter to get all recipes
-        RecipeCardAdapter recipeCardAdapter = new RecipeCardAdapter(Utils.Recipes,getContext());
-        listView.setAdapter(recipeCardAdapter);
+        RecipeCardAdapter recipeCardAdapter = new RecipeCardAdapter(getContext(),this,Utils.Recipes);
+        mRecyclerView.setAdapter(recipeCardAdapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mCallback.onRecipeCardClick(position);
-            }
-        });
+        DividerItemDecoration decoration = new DividerItemDecoration(getContext(), VERTICAL);
+        mRecyclerView.addItemDecoration(decoration);
+
 
         return root;
     }

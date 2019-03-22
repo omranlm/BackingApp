@@ -12,7 +12,7 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         DetailsFragment detailsFragment = new DetailsFragment();
 
@@ -29,4 +29,5 @@ public class DetailActivity extends AppCompatActivity {
                 .replace(R.id.detail_fragment_layout,detailsFragment)
                 .commit();
     }
+
 }
