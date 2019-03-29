@@ -43,49 +43,70 @@
 
             tools:text="ingredients" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tv_next"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
-                android:text="@string/next_step"
-                app:layout_constraintBottom_toBottomOf="@+id/btn_next_step"
-                app:layout_constraintEnd_toStartOf="@+id/btn_next_step"
-                app:layout_constraintTop_toTopOf="parent" />
+            <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+                <ImageButton
+                    android:id="@+id/btn_previous_step"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|top|left"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:src="@drawable/exo_controls_previous"
+                    android:tag="@string/previous_image_button" />
 
-            <TextView
-                android:id="@+id/tv_previous"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="8dp"
-                android:text="@string/previous_step"
-                app:layout_constraintBottom_toBottomOf="@+id/btn_next_step"
-                app:layout_constraintStart_toEndOf="@+id/btn_previous_step"
-                app:layout_constraintTop_toTopOf="parent" />
+                <TextView
+                    android:id="@+id/tv_previous"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|start|top|left"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/previous_step" />
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+                <TextView
+                    android:id="@+id/tv_next"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/next_step" />
+
+                <ImageButton
+                    android:id="@+id/btn_next_step"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:tag="@string/next_image_button"
+                    android:src="@drawable/exo_controls_next"/>
+        </LinearLayout>
 
             <TextView
                 android:id="@+id/tv_step_description"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btn_previous_step"
-                tools:text='1. Preheat the oven to 350�F. Butter the bottom and sides of a 9\"x13\" pan.' />
+                android:layout_marginRight="8dp" />
 
             <TextView
                 android:id="@+id/tv_no_media"
@@ -99,54 +120,32 @@
                 android:layout_marginBottom="8dp"
                 android:text="@string/no_media"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                android:textSize="30sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/exo_player"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_step_description"
-                app:layout_constraintVertical_bias="0.515" />
+                android:textSize="30sp" />
 
             <com.google.android.exoplayer2.ui.SimpleExoPlayerView
                 android:id="@+id/exo_player"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="250dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
 
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_step_description" >
+                >
 
             </com.google.android.exoplayer2.ui.SimpleExoPlayerView>
 
-            <ImageButton
-                android:id="@+id/btn_next_step"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:tag="@string/next_image_button"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/exo_controls_next" />
-
-            <ImageButton
-                android:id="@+id/btn_previous_step"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+            <ImageView
+                android:id="@+id/iv_step_image"
+                android:layout_width="match_parent"
+                android:layout_height="225dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="8dp"
-                android:tag="@string/previous_image_button"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/exo_controls_previous" />
+                android:layout_marginRight="8dp"
+                app:srcCompat="@mipmap/ic_launcher" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
 
     </LinearLayout>
 

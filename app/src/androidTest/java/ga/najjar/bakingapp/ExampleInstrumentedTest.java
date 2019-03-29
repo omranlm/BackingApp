@@ -23,5 +23,7 @@ public class ExampleInstrumentedTest {
         Context appContext = InstrumentationRegistry.getTargetContext();
 
         assertEquals("ga.najjar.bakingapp", appContext.getPackageName());
+
+
     }
 }

@@ -22,6 +22,7 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Re
     private Context mContext;
     private List<Recipe> recipes;
     private ItemClickListener mItemClickListener;
+    private String RECIPE_STATIC_IMAGE = "https://cdn.pixabay.com/photo/2014/12/21/23/28/recipe-575434_1280.png";
 
     @NonNull
     @Override
@@ -41,6 +42,8 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Re
 
         if (recipe.getImage() != null)
             Picasso.with(mContext).load(recipe.getImage()).into(holder.recipeImage);
+        else
+            Picasso.with(mContext).load(RECIPE_STATIC_IMAGE).into(holder.recipeImage);
 
     }
 
@@ -90,5 +93,7 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Re
             mItemClickListener.onItemClickListener(getAdapterPosition());
 
         }
+
+
     }
 }

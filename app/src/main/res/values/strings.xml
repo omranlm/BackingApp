@@ -2,9 +2,11 @@
     <string name="app_name">Baking App</string>
     <string name="ingradents">Ingradients</string>
     <string name="steps">Steps</string>
-    <string name="next_step" >Next Step</string>
+    <string name="next_step">Next Step</string>
     <string name="previous_step">Previous Step</string>
     <string name="previous_image_button">previous</string>
     <string name="next_image_button">next</string>
     <string name="no_media">No media for this step</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
 </resources>

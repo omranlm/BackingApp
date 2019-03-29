@@ -3,6 +3,8 @@ package ga.najjar.bakingapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -14,6 +16,7 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.loader.app.LoaderManager;
@@ -24,6 +27,7 @@ import ga.najjar.bakingapp.Utils.Ingredient;
 import ga.najjar.bakingapp.Utils.NetworkUtilities;
 import ga.najjar.bakingapp.Utils.Recipe;
 import ga.najjar.bakingapp.Utils.RecipeJSONUtil;
+import ga.najjar.bakingapp.Utils.SimpleIdlingResource;
 import ga.najjar.bakingapp.Utils.Step;
 import ga.najjar.bakingapp.Utils.Utils;
 
@@ -35,7 +39,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private boolean mTwoPanelMode;
     private DetailsFragment detailsFragment;
     private Bundle currentState;
-
+    private ProgressBar mLoadingPB;
+    @Nullable private SimpleIdlingResource mIdlingResource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +48,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mLoadingPB = findViewById(R.id.pb_loading);
+        mIdlingResource = getIdlingResource();
+
+        mIdlingResource.setIdleState(false);
         mDb = AppDatabase.getInstance(getApplicationContext());
+
 
         loadRecipes();
 
@@ -52,13 +62,23 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }
         currentState = savedInstanceState;
     }
+    @VisibleForTesting
+    public SimpleIdlingResource getIdlingResource()
+    {
+        if (mIdlingResource == null)
+            return new SimpleIdlingResource();
 
+        return mIdlingResource;
+
+    }
     private void loadRecipes() {
         if (NetworkUtilities.isOnline(this)) {
             LoaderManager loaderManager = getSupportLoaderManager();
             Loader<String> dataLoader = loaderManager.getLoader(LOADER_ID);
             if (dataLoader == null)
                 loaderManager.initLoader(LOADER_ID, null, this).forceLoad();
+            else
+                mLoadingPB.setVisibility(View.INVISIBLE);
             // TODO restart the loader when a referesh button is clicked
         }
 
@@ -93,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     Utils.Recipes = Arrays.asList(recipes);
 
                     updateDB(recipes);
+
 
                     Log.d("recipes.length ", String.valueOf(recipes.length));
 
@@ -153,11 +174,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         fragmentManager.beginTransaction()
                 .replace(R.id.recipe_fragment_layout, recipeFragment)
                 .commitAllowingStateLoss();
+
+        mIdlingResource.setIdleState(true);
     }
 
     @Override
     public void onLoadFinished(@NonNull Loader<String> loader, String data) {
-
+        mLoadingPB.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -207,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     protected void onDestroy() {
         super.onDestroy();
 
-        if (detailsFragment != null) {
+        if (detailsFragment != null && mTwoPanelMode) {
             detailsFragment.destroyPlayer();
             getSupportFragmentManager().beginTransaction().remove(detailsFragment).commitAllowingStateLoss();
         }

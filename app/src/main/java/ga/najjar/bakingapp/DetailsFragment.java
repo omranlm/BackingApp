@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -22,6 +23,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.squareup.picasso.Picasso;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -43,6 +45,7 @@ public class DetailsFragment extends Fragment implements View.OnClickListener {
     private TextView mTextNext;
     private ImageButton mImagePrevious;
     private TextView mTextPrevious;
+    private TextView mTextNoMedia;
     public DetailsFragment() {
 
     }
@@ -87,6 +90,8 @@ public class DetailsFragment extends Fragment implements View.OnClickListener {
         mImagePrevious = root.findViewById(R.id.btn_previous_step);
         mTextPrevious = root.findViewById(R.id.tv_previous);
 
+        mTextNoMedia = root.findViewById(R.id.tv_no_media);
+
         stepInt = 0;
         mImageNext.setVisibility(View.VISIBLE);
         mTextNext.setVisibility(View.VISIBLE);
@@ -108,6 +113,7 @@ public class DetailsFragment extends Fragment implements View.OnClickListener {
 
         Step currentStep = selectedRecipe.getSteps()[stepInt];
         TextView stepDescription = (TextView) root.findViewById(R.id.tv_step_description);
+        ImageView stepImage =  root.findViewById(R.id.iv_step_image);
 
         stepDescription.setText(currentStep.getDescription());
 
@@ -117,9 +123,24 @@ public class DetailsFragment extends Fragment implements View.OnClickListener {
         if (uri != null && !uri.equals("")) {
             initializePlayer(Uri.parse(currentStep.getVideoURL()), mExoViewer);
             mExoViewer.setVisibility(View.VISIBLE);
+            mTextNoMedia.setVisibility(View.GONE);
+
+            stepImage.setVisibility(View.GONE);
+
         }
-        else
-            mExoViewer.setVisibility(View.INVISIBLE);
+        else if (currentStep.getThumbnailURL() != null && !currentStep.getThumbnailURL().equals(""))
+        {
+            stepImage.setVisibility(View.VISIBLE);
+            Picasso.with(getContext()).load(currentStep.getThumbnailURL()).into(stepImage);
+            mExoViewer.setVisibility(View.GONE);
+            mTextNoMedia.setVisibility(View.GONE);
+        }
+        else {
+            mExoViewer.setVisibility(View.GONE);
+            // hide image
+            stepImage.setVisibility(View.GONE);
+            mTextNoMedia.setVisibility(View.VISIBLE);
+        }
 
     }
 
