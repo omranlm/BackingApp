@@ -75,4 +75,16 @@ public class Ingredient
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
+
+    @Ignore
+    public String getFullName() {
+
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(getQuantity());
+        stringBuilder.append(String.format(" %s", getMeasure()));
+        stringBuilder.append(String.format(" of %s", getIngredient()));
+        stringBuilder.append("\n");// TODO move static strings
+
+        return stringBuilder.toString();
+    }
 }
