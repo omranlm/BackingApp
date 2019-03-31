@@ -3,7 +3,7 @@ package ga.najjar.bakingapp;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -245,5 +245,19 @@ public class DetailsFragment extends Fragment implements View.OnClickListener {
     public void onDestroy() {
         super.onDestroy();
         destroyPlayer();
+    }
+
+    public void pausePlayer() {
+        if (mExoPlayer == null) return;
+
+        mExoPlayer.setPlayWhenReady(false);
+        mExoPlayer.getPlaybackState();
+    }
+    public void resumPlayer()
+    {
+        if (mExoPlayer == null) return;
+
+        mExoPlayer.setPlayWhenReady(true);
+        mExoPlayer.getPlaybackState();
     }
 }

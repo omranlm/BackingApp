@@ -7,6 +7,8 @@ import android.os.Bundle;
 
 public class DetailActivity extends AppCompatActivity {
 
+    private DetailsFragment detailsFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -14,7 +16,7 @@ public class DetailActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        DetailsFragment detailsFragment = new DetailsFragment();
+        detailsFragment = new DetailsFragment();
 
         int recipeId = -1;
         if (getIntent().hasExtra("recipeId"))
@@ -30,4 +32,22 @@ public class DetailActivity extends AppCompatActivity {
                 .commit();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+       detailsFragment.pausePlayer();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        detailsFragment.resumPlayer();
+    }
+
+    @Override
+    protected void onDestroy() {
+
+        super.onDestroy();
+    }
 }

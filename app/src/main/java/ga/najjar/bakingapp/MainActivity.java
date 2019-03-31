@@ -34,12 +34,10 @@ import ga.najjar.bakingapp.Utils.Utils;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String>, RecipeFragment.OnRecipeClickListener {
 
-    private int LOADER_ID = 22;
     private AppDatabase mDb;
     private Recipe[] recipes;
     private boolean mTwoPanelMode;
     private DetailsFragment detailsFragment;
-    private Bundle currentState;
     private ProgressBar mLoadingPB;
     @Nullable private SimpleIdlingResource mIdlingResource;
 
@@ -61,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if (findViewById(R.id.detail_fragment_layout) != null) {
             mTwoPanelMode = true;
         }
-        currentState = savedInstanceState;
+        Bundle currentState = savedInstanceState;
     }
     @VisibleForTesting
     public SimpleIdlingResource getIdlingResource()
@@ -75,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private void loadRecipes() {
         if (NetworkUtilities.isOnline(this)) {
             LoaderManager loaderManager = getSupportLoaderManager();
+            int LOADER_ID = 22;
             Loader<String> dataLoader = loaderManager.getLoader(LOADER_ID);
             if (dataLoader == null)
                 loaderManager.initLoader(LOADER_ID, null, this).forceLoad();

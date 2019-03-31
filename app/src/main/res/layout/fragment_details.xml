@@ -61,7 +61,8 @@
                     android:layout_marginLeft="8dp"
                     android:layout_marginTop="8dp"
                     android:src="@drawable/exo_controls_previous"
-                    android:tag="@string/previous_image_button" />
+                    android:tag="@string/previous_image_button"
+                    android:contentDescription="TODO" />
 
                 <TextView
                     android:id="@+id/tv_previous"

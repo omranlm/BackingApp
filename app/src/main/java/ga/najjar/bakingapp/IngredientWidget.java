@@ -40,6 +40,9 @@ public class IngredientWidget extends AppWidgetProvider {
 
         views.setTextViewText(R.id.tv_widget_recipe_name, recipe.getName());
         views.setOnClickPendingIntent(R.id.tv_widget_recipe_name, nextRecipePendingIntent);
+        views.setOnClickPendingIntent(R.id.tv_tap_to_change, nextRecipePendingIntent);
+
+
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
 
