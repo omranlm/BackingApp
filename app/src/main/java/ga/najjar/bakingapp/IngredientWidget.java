@@ -11,8 +11,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.widget.RemoteViews;
-import android.widget.Toast;
-
 import java.util.List;
 
 import ga.najjar.bakingapp.DB.AppDatabase;
@@ -32,13 +30,10 @@ public class IngredientWidget extends AppWidgetProvider {
                                 int appWidgetId, Recipe recipe, PendingIntent nextRecipePendingIntent) {
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.ingredient_widget);
+
+
         Intent intent = new Intent(context, ListService.class);
-        intent.putExtra("count", recipe.getIngredients().length);
-
-        for (int i = 0; i < recipe.getIngredients().length; i++) {
-
-            intent.putExtra("ingredient" + i, recipe.getIngredients()[i].getFullName());
-        }
+        ListViewsFactory.bindIngredients(recipe.getIngredients());
 
         views.setRemoteAdapter(R.id.lv_widget_ingredient, intent);
 
@@ -121,7 +116,7 @@ public class IngredientWidget extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
         if (NEXT_INTENT.equals(intent.getAction())) {
-            Toast.makeText(context, "Click", Toast.LENGTH_SHORT).show();
+
 
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context, IngredientWidget.class));
