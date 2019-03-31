@@ -1,11 +1,16 @@
 package ga.najjar.bakingapp;
 
+import android.annotation.TargetApi;
 import android.appwidget.AppWidgetManager;
+import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -39,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private boolean mTwoPanelMode;
     private DetailsFragment detailsFragment;
     private ProgressBar mLoadingPB;
+    private TextView mNoRecipesMassage;
     @Nullable private SimpleIdlingResource mIdlingResource;
 
     @Override
@@ -47,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mNoRecipesMassage = findViewById(R.id.tv_no_recipes);
         mLoadingPB = findViewById(R.id.pb_loading);
         mIdlingResource = getIdlingResource();
 
@@ -72,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
     private void loadRecipes() {
         if (NetworkUtilities.isOnline(this)) {
+            setTitle(getString(R.string.title_online));
             LoaderManager loaderManager = getSupportLoaderManager();
             int LOADER_ID = 22;
             Loader<String> dataLoader = loaderManager.getLoader(LOADER_ID);
@@ -79,7 +87,51 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 loaderManager.initLoader(LOADER_ID, null, this).forceLoad();
             else
                 mLoadingPB.setVisibility(View.INVISIBLE);
-            // TODO restart the loader when a referesh button is clicked
+
+        }
+        else
+        {
+            // if offline, load from Room
+            setTitle(getString(R.string.title_offline));
+            mLoadingPB.setVisibility(View.INVISIBLE);
+            new AsyncTask<Context, Void, List<Recipe>>() {
+                @Override
+                protected List<Recipe> doInBackground(Context... context) {
+
+                    AppDatabase mDb = AppDatabase.getInstance(context[0]);
+                    List<Recipe> recipes = mDb.recipeDao().loadRecipe();
+
+                    for (Recipe res : recipes) {
+                        List<Ingredient> temp = mDb.ingredientDao().loadIngredient(res.getId());
+                        Ingredient[] array = new Ingredient[temp.size()];
+                        array = temp.toArray(array);
+                        res.setIngredients(array);
+
+                        List<Step> tempSteps = mDb.stepDao().loadSteps(res.getId());
+                        Step[] arrayStep = new Step[tempSteps.size()];
+                        arrayStep = tempSteps.toArray(arrayStep);
+                        res.setSteps(arrayStep);
+                    }
+                    return recipes;
+                }
+
+                @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+                @Override
+                protected void onPostExecute(List<Recipe> List) {
+                    super.onPostExecute(List);
+
+                    if (List!= null && List.size()>0) {
+                        Utils.Recipes = List;
+                        updateRecipeFragment();
+                    }
+                    else
+                    {
+                        // show that no Recipes offline
+                        mNoRecipesMassage.setVisibility(View.VISIBLE);
+                    }
+                }
+
+            }.execute(this);
         }
 
     }

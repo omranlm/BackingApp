@@ -9,4 +9,7 @@
     <string name="no_media">No media for this step</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
+    <string name="title_online">Backing App (online)</string>
+    <string name="title_offline">Backing App (offline)</string>
+    <string name="no_recipes">No Recipes are available offline. Please connect to the internet and try again.</string>
 </resources>
